@@ -4,6 +4,7 @@ package com.example.gamedemo;
 import com.example.gamedemo.model.Avatar;
 import com.example.gamedemo.model.Bullet;
 import com.example.gamedemo.model.Enemy;
+import com.example.gamedemo.model.Vector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,8 +47,8 @@ public class GameController implements Initializable {
         canvas.setFocusTraversable(true);
 
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(canvas, 300,100));
-        enemies.add(new Enemy(canvas, 300,300));
+        enemies.add(new Enemy(canvas, 300, 100));
+        enemies.add(new Enemy(canvas, 300, 300));
 
         bullets = new ArrayList<>();
 
@@ -68,15 +69,15 @@ public class GameController implements Initializable {
                             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
                             avatar.draw();
                             //Pintar enemigos
-                            for(int i=0 ; i<enemies.size() ; i++){
+                            for (int i = 0; i < enemies.size(); i++) {
                                 enemies.get(i).draw();
                             }
-                            for(int i=0 ; i<bullets.size() ; i++){
+                            for (int i = 0; i < bullets.size(); i++) {
                                 bullets.get(i).draw();
-                                if (bullets.get(i).x > canvas.getWidth()+20 ||
-                                        bullets.get(i).y > canvas.getHeight()+20 ||
-                                        bullets.get(i).y < -20 ||
-                                        bullets.get(i).x < -20)  {
+                                if (bullets.get(i).pos.x > canvas.getWidth() + 20 ||
+                                        bullets.get(i).pos.y > canvas.getHeight() + 20 ||
+                                        bullets.get(i).pos.y < -20 ||
+                                        bullets.get(i).pos.x < -20) {
                                     bullets.remove(i);
                                 }
                             }
@@ -99,15 +100,15 @@ public class GameController implements Initializable {
     }
 
     private void detectCollission() {
-        for(int i=0 ; i<enemies.size() ; i++){
-            for(int j=0 ; j<bullets.size() ; j++){
+        for (int i = 0; i < enemies.size(); i++) {
+            for (int j = 0; j < bullets.size(); j++) {
                 Bullet b = bullets.get(j);
                 Enemy e = enemies.get(i);
 
-                double c1 = b.x-e.x;
-                double c2 = b.y-e.y;
-                double distance = Math.sqrt( Math.pow(c1,2) + Math.pow(c2,2) );
-                if(distance < 12.5){
+                double c1 = b.pos.x - e.x;
+                double c2 = b.pos.y - e.y;
+                double distance = Math.sqrt(Math.pow(c1, 2) + Math.pow(c2, 2));
+                if (distance < 12.5) {
                     bullets.remove(j);
                     enemies.remove(i);
                     return;
@@ -161,8 +162,10 @@ public class GameController implements Initializable {
         if (keyEvent.getCode() == KeyCode.D) {
             Dpressed = true;
         }
-        if(keyEvent.getCode() == KeyCode.SPACE){
-            Bullet bullet = new Bullet(canvas, (int) avatar.pos.x, (int) avatar.pos.y);
+        if (keyEvent.getCode() == KeyCode.SPACE) {
+            Bullet bullet = new Bullet(canvas,
+                    new Vector(avatar.pos.x, avatar.pos.y),
+                    new Vector(2*avatar.direction.x, 2*avatar.direction.y));
             bullets.add(bullet);
         }
     }
